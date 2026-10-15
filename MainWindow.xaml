@@ -1,0 +1,82 @@
+﻿<Window x:Class="Pract_7.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Pract_7"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListView x:Name="list"
+            ItemsSource="{Binding Movies}"
+            SelectedItem="{Binding CurrentMovie}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0">Название: </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Title}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0">Жанр: </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding Genre}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0">Продолжительность: </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding DurationMinutes}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0">Год Выпуска: </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding ReleaseYear}"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5 0">Доступен: </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Text="{Binding IsAvailable}"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel Grid.Column="1">
+            <StackPanel Margin="0 5" Width="200">
+                
+                <TextBlock Margin="0 5">Фильтрация списка:</TextBlock>
+
+                <TextBox Margin="0 5" Text="{Binding filtGenre}"></TextBox>
+                <TextBox Margin="0 5" Text="{Binding filMinYear}"></TextBox>
+            </StackPanel>
+
+            <Button Width="230" Margin="0 5">Создать новую запись</Button>
+            <Button Width="230" Margin="0 5">Внести изменения</Button>
+            <Button Width="230" Margin="0 5">Внести изменения частично</Button>
+            <Button Width="230" Margin="0 5">Удалить выбранное</Button>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" DataContext="{Binding CurrentMovie}" x:Name="Current">
+            
+            <TextBlock Margin="0 5">Название:</TextBlock>
+            <TextBox Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}"></TextBox> 
+            
+            <TextBlock Margin="0 5">Жанр:</TextBlock>
+            <TextBox Text="{Binding Genre,UpdateSourceTrigger=PropertyChanged}"></TextBox>  
+            
+            <TextBlock Margin="0 5">Продолжительность:</TextBlock>
+            <TextBox Text="{Binding DurationMinutes,UpdateSourceTrigger=PropertyChanged}"></TextBox>  
+            
+            <TextBlock Margin="0 5">Год выпуска:</TextBlock>
+            <TextBox Text="{Binding ReleaseYear,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            
+            <TextBlock Margin="0 5">Доступен:</TextBlock>
+            <CheckBox IsChecked="{Binding IsAvailable,UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+        </StackPanel>
+        
+    </Grid>
+</Window>
