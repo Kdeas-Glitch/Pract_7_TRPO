@@ -8,6 +8,8 @@ namespace Pract_7.models
 {
     public class FMovie
     {
+        public int? ID { get; set; } = null;
+
         private string title = "";
         public string? Title { get; set; } = null!;
 

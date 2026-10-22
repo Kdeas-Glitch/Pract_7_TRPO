@@ -28,11 +28,13 @@ namespace Pract_7
 
         public ObservableCollection<FMovie> Movies { get; set; } = new();
 
+        FMovie? C = null;
+
         public FMovie? CurrentMovie { get; set; } = new();
 
         public string? filtGenre { get; set; } = null;
 
-        public int? filMinYear { get; set; } = null;
+        public int? filMinYear { get; set; } = 0;
         public MainWindow()
         {
             client.BaseAddress = new Uri("https://localhost:7179/");
@@ -57,6 +59,235 @@ namespace Pract_7
                 foreach(var intem in response)
                 {
                     Movies.Add(intem);
+                }
+            }
+        }
+
+        private void Change(object sender, SelectionChangedEventArgs e)
+        {
+            C=null;
+
+            if (CurrentMovie != null)
+            {
+                C = new FMovie();
+                C.ID = CurrentMovie.ID;
+                C.Title = CurrentMovie.Title;
+                C.Genre = CurrentMovie.Genre;
+                C.ReleaseYear = CurrentMovie.ReleaseYear;
+                C.DurationMinutes = CurrentMovie.DurationMinutes;
+                C.IsAvailable = CurrentMovie.IsAvailable;
+            }
+            
+             Current.DataContext = C;
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (C != null&&C.ID!=null) {
+                HttpResponseMessage res = await client.PatchAsJsonAsync(
+                    $"api/v1/movie/{C.ID}",
+                    new
+                    {
+                        Title = C.Title,
+                        Genre = C.Genre,
+                        DurationMinutes = (C.DurationMinutes!=null&& C.DurationMinutes>0)? C.DurationMinutes : null,
+                        ReleaseYear = (C.ReleaseYear != null && C.ReleaseYear > 0) ? C.ReleaseYear : null,
+                        IsAvailable = C.IsAvailable
+                    }
+                    );
+                if (res.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Успешно изменено");
+                    GetAll();
+                }
+                else
+                {
+
+                    MessageBox.Show("Успешно НЕ изменено");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите элемент!");
+            }
+        }
+
+        private async void ChangeWhole(object sender, RoutedEventArgs e)
+        {
+            if (C != null && C.ID != null)
+            {
+                HttpResponseMessage res = await client.PatchAsJsonAsync(
+                    $"api/v1/movie/{C.ID}",
+                    new
+                    {
+                        Title = C.Title,
+                        Genre = C.Genre,
+                        DurationMinutes = C.DurationMinutes,
+                        ReleaseYear =C.ReleaseYear,
+                        IsAvailable = C.IsAvailable
+                    }
+                    );
+                if (res.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Успешно изменено");
+                    GetAll();
+                }
+                else
+                {
+
+                    MessageBox.Show("Неверные данные");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите элемент!");
+            }
+        }
+
+        private async void Create(object sender, RoutedEventArgs e)
+        {
+            if (C != null)
+            {
+                HttpResponseMessage res = await client.PostAsJsonAsync(
+                    $"api/v1/movie",
+                    new
+                    {
+                        Title = C.Title,
+                        Genre = C.Genre,
+                        DurationMinutes = C.DurationMinutes,
+                        ReleaseYear = C.ReleaseYear,
+                        IsAvailable = C.IsAvailable
+                    }
+                    );
+
+                if (res.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Успешно добавлено");
+                    GetAll();
+                }
+                else
+                {
+                    MessageBox.Show("Неправильные данные");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите элемент!");
+            }
+        }
+
+        private async void Delete(object sender, RoutedEventArgs e)
+        {
+            if (C != null && C.ID != null)
+            {
+                HttpResponseMessage res = await client.DeleteAsync($"api/v1/movie/{C.ID}");
+
+                if (res.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Успешное удаление");
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка удаления");
+                }
+                GetAll();
+            }
+            else
+            {
+                MessageBox.Show("Выберите элемент!");
+            }
+        }
+
+        private async void Filter(object sender, TextChangedEventArgs e)
+        {
+            if(filtGenre!= null && filtGenre != "")
+            {
+                try
+                {
+
+                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}&minYear={filMinYear}");
+
+                    Movies.Clear();
+
+                    if (response != null)
+                    {
+                        foreach (var intem in response)
+                        {
+                            Movies.Add(intem);
+                        }
+                    }
+                }
+                catch
+                {
+                    Movies.Clear();
+                }
+            }
+            else
+            {
+                try
+                {
+                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie/?minYear={filMinYear}");
+
+                    Movies.Clear();
+
+                    if (response != null)
+                    {
+                        foreach (var intem in response)
+                        {
+                            Movies.Add(intem);
+                        }
+                    }
+                }
+                catch
+                {
+                    Movies.Clear();
+                }
+            }
+        }
+
+        private async void Filter2(object sender, RoutedEventArgs e)
+        {
+            if (filtGenre != null && filtGenre != "")
+            {
+                try
+                {
+
+                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}&minYear={filMinYear}");
+
+                    Movies.Clear();
+
+                    if (response != null)
+                    {
+                        foreach (var intem in response)
+                        {
+                            Movies.Add(intem);
+                        }
+                    }
+                }
+                catch
+                {
+                    Movies.Clear();
+                }
+            }
+            else
+            {
+                try
+                {
+                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie/?minYear={filMinYear}");
+
+                    Movies.Clear();
+
+                    if (response != null)
+                    {
+                        foreach (var intem in response)
+                        {
+                            Movies.Add(intem);
+                        }
+                    }
+                }
+                catch
+                {
+                    Movies.Clear();
                 }
             }
         }

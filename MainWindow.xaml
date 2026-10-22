@@ -16,7 +16,8 @@
 
         <ListView x:Name="list"
             ItemsSource="{Binding Movies}"
-            SelectedItem="{Binding CurrentMovie}">
+            SelectedItem="{Binding CurrentMovie}" SelectionChanged="Change"
+                  >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -50,14 +51,14 @@
                 
                 <TextBlock Margin="0 5">Фильтрация списка:</TextBlock>
 
-                <TextBox Margin="0 5" Text="{Binding filtGenre}"></TextBox>
-                <TextBox Margin="0 5" Text="{Binding filMinYear}"></TextBox>
+                <TextBox Margin="0 5" Text="{Binding filtGenre,UpdateSourceTrigger=PropertyChanged}" LostFocus="Filter2"></TextBox>
+                <TextBox Margin="0 5" Text="{Binding filMinYear,UpdateSourceTrigger=PropertyChanged}" LostFocus="Filter2" ></TextBox>
             </StackPanel>
 
-            <Button Width="230" Margin="0 5">Создать новую запись</Button>
-            <Button Width="230" Margin="0 5">Внести изменения</Button>
-            <Button Width="230" Margin="0 5">Внести изменения частично</Button>
-            <Button Width="230" Margin="0 5">Удалить выбранное</Button>
+            <Button Width="230" Margin="0 5" Click="Create">Создать новую запись</Button>
+            <Button Width="230" Margin="0 5" Click="ChangeWhole">Внести изменения</Button>
+            <Button Width="230" Margin="0 5" Click="Button_Click">Внести изменения частично</Button>
+            <Button Width="230" Margin="0 5" Click="Delete">Удалить выбранное</Button>
         </StackPanel>
 
         <StackPanel Grid.Column="2" DataContext="{Binding CurrentMovie}" x:Name="Current">

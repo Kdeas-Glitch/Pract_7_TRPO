@@ -25,3 +25,4 @@ C:\Users\st310-04\Desktop\Демин\Pract_7\obj\Debug\net8.0-windows\refint\Pra
 C:\Users\st310-04\Desktop\Демин\Pract_7\obj\Debug\net8.0-windows\Pract_7.pdb
 C:\Users\st310-04\Desktop\Демин\Pract_7\obj\Debug\net8.0-windows\Pract_7.genruntimeconfig.cache
 C:\Users\st310-04\Desktop\Демин\Pract_7\obj\Debug\net8.0-windows\ref\Pract_7.dll
+C:\Users\st310-04\Desktop\Демин\Pract_7\obj\Debug\net8.0-windows\Pract_7.sourcelink.json
