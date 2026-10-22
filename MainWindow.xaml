@@ -46,20 +46,26 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <StackPanel Grid.Column="1">
-            <StackPanel Margin="0 5" Width="200">
+        <Grid Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <StackPanel>
                 
-                <TextBlock Margin="0 5">Фильтрация списка:</TextBlock>
+                <TextBlock Margin="0 5" Grid.Row="0">Фильтрация списка:</TextBlock>
 
                 <TextBox Margin="0 5" Text="{Binding filtGenre,UpdateSourceTrigger=PropertyChanged}" LostFocus="Filter2"></TextBox>
-                <TextBox Margin="0 5" Text="{Binding filMinYear,UpdateSourceTrigger=PropertyChanged}" LostFocus="Filter2" ></TextBox>
+                <TextBox Margin="0 5" Text="{Binding filMinYear,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}" LostFocus="Filter2" ></TextBox>
             </StackPanel>
 
-            <Button Width="230" Margin="0 5" Click="Create">Создать новую запись</Button>
-            <Button Width="230" Margin="0 5" Click="ChangeWhole">Внести изменения</Button>
-            <Button Width="230" Margin="0 5" Click="Button_Click">Внести изменения частично</Button>
-            <Button Width="230" Margin="0 5" Click="Delete">Удалить выбранное</Button>
-        </StackPanel>
+            <StackPanel Grid.Row="1" >
+                <Button  Width="230" Margin="0 5" Click="Create">Создать новую запись</Button>
+                <Button  Width="230" Margin="0 5" Click="ChangeWhole">Внести изменения</Button>
+                <Button  Width="230" Margin="0 5" Click="Button_Click">Внести изменения частично</Button>
+                <Button  Width="230" Margin="0 5" Click="Delete">Удалить выбранное</Button>
+            </StackPanel>
+        </Grid>
 
         <StackPanel Grid.Column="2" DataContext="{Binding CurrentMovie}" x:Name="Current">
             
@@ -70,11 +76,11 @@
             <TextBox Text="{Binding Genre,UpdateSourceTrigger=PropertyChanged}"></TextBox>  
             
             <TextBlock Margin="0 5">Продолжительность:</TextBlock>
-            <TextBox Text="{Binding DurationMinutes,UpdateSourceTrigger=PropertyChanged}"></TextBox>  
+            <TextBox Text="{Binding DurationMinutes,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}"></TextBox>  
             
             <TextBlock Margin="0 5">Год выпуска:</TextBlock>
-            <TextBox Text="{Binding ReleaseYear,UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            
+            <TextBox Text="{Binding ReleaseYear,UpdateSourceTrigger=PropertyChanged,TargetNullValue=''}"></TextBox>
+
             <TextBlock Margin="0 5">Доступен:</TextBlock>
             <CheckBox IsChecked="{Binding IsAvailable,UpdateSourceTrigger=PropertyChanged}"></CheckBox>
         </StackPanel>

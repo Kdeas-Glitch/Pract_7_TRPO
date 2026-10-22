@@ -28,20 +28,20 @@ namespace Pract_7
 
         public ObservableCollection<FMovie> Movies { get; set; } = new();
 
-        FMovie? C = null;
+        FMovie C = new();
 
         public FMovie? CurrentMovie { get; set; } = new();
 
         public string? filtGenre { get; set; } = null;
 
-        public int? filMinYear { get; set; } = 0;
+        public int? filMinYear { get; set; } = null;
         public MainWindow()
         {
             client.BaseAddress = new Uri("https://localhost:7179/");
             
             InitializeComponent();
 
-            Current.DataContext = CurrentMovie;
+            Current.DataContext = C;
 
             DataContext = this;
 
@@ -50,22 +50,115 @@ namespace Pract_7
 
         public async void GetAll()
         {
-            var response = await client.GetFromJsonAsync<List<FMovie>>("api/v1/Movie");
-
-            Movies.Clear();
-
-            if (response != null)
+            if (filtGenre != null && filtGenre != "" && filMinYear != null)//всё разом
             {
-                foreach(var intem in response)
+                try
                 {
-                    Movies.Add(intem);
+
+                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}&minYear={filMinYear}");
+
+                    Movies.Clear();
+
+                    if (response != null)
+                    {
+                        foreach (var intem in response)
+                        {
+                            Movies.Add(intem);
+                        }
+                    }
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    MessageBox.Show($"Связь с API сервером не установлена");
+                }
+                catch
+                {
+                    Movies.Clear();
+                }
+            }
+            else
+            {
+                if (filMinYear != null)//только год
+                {
+                    try
+                    {
+                        var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie/?minYear={filMinYear}");
+
+                        Movies.Clear();
+
+                        if (response != null)
+                        {
+                            foreach (var intem in response)
+                            {
+                                Movies.Add(intem);
+                            }
+                        }
+                    }
+                    catch (System.Net.Http.HttpRequestException)
+                    {
+                        MessageBox.Show($"Связь с API сервером не установлена");
+                    }
+                    catch
+                    {
+                        Movies.Clear();
+                    }
+                }
+                else
+                {
+                    if (filtGenre != null && filtGenre != "")//только жанр
+                    {
+                        try
+                        {
+
+                            var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}");
+
+                            Movies.Clear();
+
+                            if (response != null)
+                            {
+                                foreach (var intem in response)
+                                {
+                                    Movies.Add(intem);
+                                }
+                            }
+                        }
+                        catch (System.Net.Http.HttpRequestException)
+                        {
+                            MessageBox.Show($"Связь с API сервером не установлена");
+                        }
+                        catch
+                        {
+                            Movies.Clear();
+                        }
+                    }
+                    else//всё пустое
+                    {
+                        try
+                        {
+                            var response = await client.GetFromJsonAsync<List<FMovie>>("api/v1/Movie");
+
+                            Movies.Clear();
+
+                            if (response != null)
+                            {
+                                foreach (var intem in response)
+                                {
+                                    Movies.Add(intem);
+                                }
+                            }
+                        }
+                        catch (System.Net.Http.HttpRequestException)
+                        {
+                            MessageBox.Show($"Связь с API сервером не установлена");
+                        }
+                    }
                 }
             }
         }
 
         private void Change(object sender, SelectionChangedEventArgs e)
         {
-            C=null;
+            C=new();
 
             if (CurrentMovie != null)
             {
@@ -81,17 +174,17 @@ namespace Pract_7
              Current.DataContext = C;
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)//Patch
         {
-            if (C != null&&C.ID!=null) {
+            if (C.ID!=null) {
                 HttpResponseMessage res = await client.PatchAsJsonAsync(
                     $"api/v1/movie/{C.ID}",
                     new
                     {
                         Title = C.Title,
                         Genre = C.Genre,
-                        DurationMinutes = (C.DurationMinutes!=null&& C.DurationMinutes>0)? C.DurationMinutes : null,
-                        ReleaseYear = (C.ReleaseYear != null && C.ReleaseYear > 0) ? C.ReleaseYear : null,
+                        DurationMinutes =  C.DurationMinutes,
+                        ReleaseYear = C.ReleaseYear,
                         IsAvailable = C.IsAvailable
                     }
                     );
@@ -103,7 +196,7 @@ namespace Pract_7
                 else
                 {
 
-                    MessageBox.Show("Успешно НЕ изменено");
+                    MessageBox.Show("Неверные данные");
                 }
             }
             else
@@ -112,11 +205,11 @@ namespace Pract_7
             }
         }
 
-        private async void ChangeWhole(object sender, RoutedEventArgs e)
+        private async void ChangeWhole(object sender, RoutedEventArgs e)//Put
         {
-            if (C != null && C.ID != null)
+            if (C.ID != null)
             {
-                HttpResponseMessage res = await client.PatchAsJsonAsync(
+                HttpResponseMessage res = await client.PutAsJsonAsync(
                     $"api/v1/movie/{C.ID}",
                     new
                     {
@@ -146,7 +239,7 @@ namespace Pract_7
 
         private async void Create(object sender, RoutedEventArgs e)
         {
-            if (C != null)
+            try
             {
                 HttpResponseMessage res = await client.PostAsJsonAsync(
                     $"api/v1/movie",
@@ -170,15 +263,19 @@ namespace Pract_7
                     MessageBox.Show("Неправильные данные");
                 }
             }
-            else
+            catch (System.Net.Http.HttpRequestException)
             {
-                MessageBox.Show("Выберите элемент!");
+                MessageBox.Show($"Связь с API сервером не установлена");
+            }
+            catch
+            {
+                MessageBox.Show("Неверные данные");
             }
         }
 
         private async void Delete(object sender, RoutedEventArgs e)
         {
-            if (C != null && C.ID != null)
+            if (C.ID != null)
             {
                 HttpResponseMessage res = await client.DeleteAsync($"api/v1/movie/{C.ID}");
 
@@ -198,98 +295,10 @@ namespace Pract_7
             }
         }
 
-        private async void Filter(object sender, TextChangedEventArgs e)
-        {
-            if(filtGenre!= null && filtGenre != "")
-            {
-                try
-                {
-
-                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}&minYear={filMinYear}");
-
-                    Movies.Clear();
-
-                    if (response != null)
-                    {
-                        foreach (var intem in response)
-                        {
-                            Movies.Add(intem);
-                        }
-                    }
-                }
-                catch
-                {
-                    Movies.Clear();
-                }
-            }
-            else
-            {
-                try
-                {
-                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie/?minYear={filMinYear}");
-
-                    Movies.Clear();
-
-                    if (response != null)
-                    {
-                        foreach (var intem in response)
-                        {
-                            Movies.Add(intem);
-                        }
-                    }
-                }
-                catch
-                {
-                    Movies.Clear();
-                }
-            }
-        }
 
         private async void Filter2(object sender, RoutedEventArgs e)
         {
-            if (filtGenre != null && filtGenre != "")
-            {
-                try
-                {
-
-                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie?Genre={filtGenre}&minYear={filMinYear}");
-
-                    Movies.Clear();
-
-                    if (response != null)
-                    {
-                        foreach (var intem in response)
-                        {
-                            Movies.Add(intem);
-                        }
-                    }
-                }
-                catch
-                {
-                    Movies.Clear();
-                }
-            }
-            else
-            {
-                try
-                {
-                    var response = await client.GetFromJsonAsync<List<FMovie>>($"api/v1/Movie/?minYear={filMinYear}");
-
-                    Movies.Clear();
-
-                    if (response != null)
-                    {
-                        foreach (var intem in response)
-                        {
-                            Movies.Add(intem);
-                        }
-                    }
-                }
-                catch
-                {
-                    Movies.Clear();
-                }
-            }
+            GetAll();
         }
     }
 }
